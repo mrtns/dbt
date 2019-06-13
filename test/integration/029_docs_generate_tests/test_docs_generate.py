@@ -7,7 +7,6 @@ from mock import ANY, patch
 
 from test.integration.base import DBTIntegrationTest, use_profile, AnyFloat, \
     AnyStringWith
-from dbt.compat import basestring
 
 
 def _read_file(path):
@@ -15,7 +14,7 @@ def _read_file(path):
         return fp.read().replace('\r', '').replace('\\r', '')
 
 
-class LineIndifferent(object):
+class LineIndifferent:
     def __init__(self, expected):
         self.expected = expected.replace('\r', '')
 
@@ -29,7 +28,7 @@ class LineIndifferent(object):
         return self.__repr__()
 
 
-class OneOf(object):
+class OneOf:
     def __init__(self, *options):
         self.options = options
 
@@ -72,7 +71,7 @@ class TestDocsGenerate(DBTIntegrationTest):
     setup_alternate_db = True
 
     def setUp(self):
-        super(TestDocsGenerate, self).setUp()
+        super().setUp()
         self.maxDiff = None
 
     @property

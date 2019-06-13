@@ -54,7 +54,7 @@ def source(db_wrapper, model, config, manifest):
     return do_source
 
 
-class Config(object):
+class Config:
     def __init__(self, model, source_config):
         self.model = model
         self.source_config = source_config

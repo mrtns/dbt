@@ -34,13 +34,13 @@ class BaseSourcesTest(DBTIntegrationTest):
         }
 
     def setUp(self):
-        super(BaseSourcesTest, self).setUp()
+        super().setUp()
         os.environ['DBT_TEST_SCHEMA_NAME_VARIABLE'] = 'test_run_schema'
         self.run_dbt_with_vars(['seed'], strict=False)
 
     def tearDown(self):
         del os.environ['DBT_TEST_SCHEMA_NAME_VARIABLE']
-        super(BaseSourcesTest, self).tearDown()
+        super().tearDown()
 
     def run_dbt_with_vars(self, cmd, *args, **kwargs):
         cmd.extend(['--vars',
@@ -50,7 +50,7 @@ class BaseSourcesTest(DBTIntegrationTest):
 
 class TestSources(BaseSourcesTest):
     def _create_schemas(self):
-        super(TestSources, self)._create_schemas()
+        super()._create_schemas()
         self._create_schema_named(self.default_database,
                                   self.alternative_schema())
 
@@ -58,7 +58,7 @@ class TestSources(BaseSourcesTest):
         return self.unique_schema() + '_other'
 
     def setUp(self):
-        super(TestSources, self).setUp()
+        super().setUp()
         self.run_sql(
             'create table {}.dummy_table (id int)'.format(self.unique_schema())
         )
@@ -152,7 +152,7 @@ class TestSources(BaseSourcesTest):
 
 class TestSourceFreshness(BaseSourcesTest):
     def setUp(self):
-        super(TestSourceFreshness, self).setUp()
+        super().setUp()
         self.maxDiff = None
         self._id = 100
         # this is the db initial value
@@ -305,7 +305,7 @@ class ServerProcess(multiprocessing.Process):
         ]
         if cli_vars:
             handle_and_check_args.extend(['--vars', cli_vars])
-        super(ServerProcess, self).__init__(
+        super().__init__(
             target=handle_and_check,
             args=(handle_and_check_args,),
             name='ServerProcess')
@@ -320,7 +320,7 @@ class ServerProcess(multiprocessing.Process):
         return True
 
     def start(self):
-        super(ServerProcess, self).start()
+        super().start()
         for _ in range(10):
             if self.is_up():
                 break
@@ -342,7 +342,7 @@ class BackgroundQueryProcess(multiprocessing.Process):
         self.child_pipe = child
         self.query = query
         self.url = url
-        super(BackgroundQueryProcess, self).__init__(group=group, name=name)
+        super().__init__(group=group, name=name)
 
     def run(self):
         try:
@@ -380,7 +380,7 @@ def addr_in_use(err, *args):
 @mark.flaky(rerun_filter=addr_in_use)
 class TestRPCServer(BaseSourcesTest):
     def setUp(self):
-        super(TestRPCServer, self).setUp()
+        super().setUp()
         port = random.randint(20000, 65535)
         self._server = ServerProcess(
             cli_vars='{{test_run_schema: {}}}'.format(self.unique_schema()),
@@ -391,7 +391,7 @@ class TestRPCServer(BaseSourcesTest):
 
     def tearDown(self):
         self._server.terminate()
-        super(TestRPCServer, self).tearDown()
+        super().tearDown()
 
     @property
     def project_config(self):
@@ -786,10 +786,6 @@ class TestRPCServer(BaseSourcesTest):
         self.assertEqual(error_data['signum'], 2)
         self.assertEqual(error_data['message'], 'RPC process killed by signal 2')
         self.assertIn('logs', error_data)
-        # it should take less than 5s to kill the process if things are working
-        # properly. On python 2.x, things do not work properly.
-        if sys.version_info.major > 2:
-            self.assertLess(result_time, kill_time + 5)
         return error_data
 
     def _get_sleep_query(self):

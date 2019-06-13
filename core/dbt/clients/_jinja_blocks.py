@@ -7,7 +7,7 @@ def regex(pat):
     return re.compile(pat, re.DOTALL | re.MULTILINE)
 
 
-class BlockData(object):
+class BlockData:
     """raw plaintext data from the top level of the file."""
     def __init__(self, contents):
         self.block_type_name = '__dbt__data'
@@ -15,7 +15,7 @@ class BlockData(object):
         self.full_block = contents
 
 
-class BlockTag(object):
+class BlockTag:
     def __init__(self, block_type_name, block_name, contents=None,
                  full_block=None, **kw):
         self.block_type_name = block_type_name
@@ -115,7 +115,7 @@ NON_STRING_DO_BLOCK_MEMBER_PATTERN = regex(
 )
 
 
-class BlockIterator(object):
+class BlockIterator:
     def __init__(self, data):
         self.data = data
         self.blocks = []
@@ -309,7 +309,6 @@ class BlockIterator(object):
         if equal_or_close.groupdict().get('tag_close') is None:
             # it's an equals sign, must be like {% set x = 1 %}
             self._process_rval_components()
-            # watch out, order matters here on python 2
             block = BlockTag(full_block=self.data[match.start():self.pos],
                              **match.groupdict())
         else:
