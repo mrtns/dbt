@@ -95,6 +95,7 @@ class SchemaSearchMap(dict):
     """A utility class to keep track of what information_schema tables to
     search for what schemas
     """
+
     def add(self, relation):
         key = relation.information_schema_only()
         if key not in self:
@@ -570,6 +571,9 @@ class BaseAdapter(object):
         relations = self.list_relations_without_caching(
             information_schema, schema, model_name=model_name
         )
+
+        for relation in relations:
+            self.cache.add(relation)
 
         logger.debug('with schema={}, model_name={}, relations={}'
                      .format(schema, model_name, relations))
